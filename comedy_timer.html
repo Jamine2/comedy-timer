@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Comedy Class Timer</title>
+  <style>
+    body{font-family:sans-serif;background:#1F2A44;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;margin:0}
+    .time{font-size:6rem;font-weight:bold;margin-bottom:20px}
+    .buttons{display:flex;gap:15px}
+    button{flex:1;padding:18px 30px;border:none;border-radius:12px;font-size:1.2rem;cursor:pointer;font-weight:bold}
+    #start{background:#E8552B;color:#fff}
+    #pause{background:#FFA500;color:#000}
+    #reset{background:#fff;color:#1F2A44}
+    button:disabled{background:#888;opacity:0.6}
+  </style>
+</head>
+<body>
+  <div class="time" id="display">6:30</div>
+  <div class="buttons">
+    <button id="start">▶ Start</button>
+    <button id="pause">⏸ Pause</button>
+    <button id="reset">⟲ Reset</button>
+  </div>
+
+<script>
+const TOTAL = 390;
+let remaining = TOTAL;
+let interval = null;
+const display = document.getElementById("display");
+
+function updateDisplay() {
+  const m = Math.floor(remaining / 60);
+  const s = remaining % 60;
+  display.textContent = `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+function playLaugh() {
+  const audio = new Audio("Laughs.m4a");
+  audio.volume = 0.7;
+  audio.play().catch(()=>{});
+}
+
+function tick() {
+  remaining--;
+  updateDisplay();
+  if (remaining % 30 === 0 && remaining > 0) playLaugh();
+  if (remaining <= 0) {
+    clearInterval(interval);
+    document.getElementById("start").disabled = false;
+  }
+}
+
+document.getElementById("start").onclick = () => {
+  document.getElementById("start").disabled = true;
+  interval = setInterval(tick, 1000);
+};
+
+document.getElementById("pause").onclick = () => {
+  clearInterval(interval);
+  document.getElementById("start").disabled = false;
+};
+
+document.getElementById("reset").onclick = () => {
+  clearInterval(interval);
+  remaining = TOTAL;
+  updateDisplay();
+  document.getElementById("start").disabled = false;
+};
+
+updateDisplay();
+</script>
+</body>
+</html>
